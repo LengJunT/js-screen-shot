@@ -47,7 +47,7 @@ let rightPanel: HTMLElement | null = null;
 let colorSelectPanel: HTMLElement | null = null;
 let undoController: HTMLElement | null = null;
 // 屏幕截图容器
-let screenShotImageController: HTMLCanvasElement | null = null;
+let screenShotImageController: HTMLCanvasElement;
 
 // 数据初始化标识
 let initStatus = false;
@@ -92,24 +92,32 @@ export default class InitData {
   // 设置截图容器宽高
   public setScreenShotInfo(width: number, height: number) {
     this.getScreenShotContainer();
+    this.getScreenShotImageController();
     if (screenShotController == null) return;
     screenShotController.width = width;
     screenShotController.height = height;
+    screenShotImageController.width = width;
+    screenShotImageController.height = height;
   }
 
   // 设置截图容器位置
   public setScreenShotPosition(left: number, top: number) {
     this.getScreenShotContainer();
+    this.getScreenShotImageController();
     if (screenShotController == null) return;
     screenShotController.style.left = left + "px";
     screenShotController.style.top = top + "px";
+    screenShotImageController.style.left = left + "px";
+    screenShotImageController.style.top = top + "px";
   }
 
   // 显示截图区域容器
   public showScreenShotPanel() {
     this.getScreenShotContainer();
+    this.getScreenShotImageController();
     if (screenShotController == null) return;
     screenShotController.style.display = "block";
+    screenShotImageController.style.display = "block";
   }
 
   // 获取截图容器dom
@@ -118,6 +126,14 @@ export default class InitData {
       "screenShotContainer"
     ) as HTMLCanvasElement | null;
     return screenShotController;
+  }
+
+  // 获取截图容器dom
+  public getScreenShotImageController() {
+    screenShotImageController = document.getElementById(
+      "screenShotImageController"
+    ) as HTMLCanvasElement;
+    return screenShotImageController;
   }
 
   // 获取截图工具栏dom
@@ -149,10 +165,10 @@ export default class InitData {
     return textClickStatus;
   }
 
-  // 获取屏幕截图容器
-  public getScreenShotImageController() {
-    return screenShotImageController;
-  }
+  // // 获取屏幕截图容器
+  // public getScreenShotImageController() {
+  //   return screenShotImageController;
+  // }
 
   // 设置屏幕截图
   public setScreenShotImageController(imageController: HTMLCanvasElement) {
@@ -452,6 +468,7 @@ export default class InitData {
   public destroyDOM() {
     if (
       screenShotController == null ||
+      screenShotImageController == null ||
       toolController == null ||
       optionIcoController == null ||
       optionController == null ||
@@ -461,6 +478,7 @@ export default class InitData {
       return;
     // 销毁dom
     document.body.removeChild(screenShotController);
+    document.body.removeChild(screenShotImageController);
     document.body.removeChild(toolController);
     document.body.removeChild(optionIcoController);
     document.body.removeChild(optionController);

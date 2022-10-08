@@ -115,12 +115,13 @@ export default class ScreenShot {
   constructor(options: screenShotType) {
     // 提取options中的有用参数设置到全局参数中
     setPlugInParameters(options);
-    // 创建截图所需dom并设置回调函数
-    new CreateDom(options);
     // 创建并获取webrtc模式所需要的辅助dom
     this.videoController = document.createElement("video");
     this.videoController.autoplay = true;
     this.screenShotImageController = document.createElement("canvas");
+    // 创建截图所需dom并设置回调函数
+    new CreateDom(options, this.screenShotImageController);
+    // document.body.appendChild(this.screenShotImageController);
     // 实例化响应式data
     this.data = new InitData();
 
@@ -160,16 +161,16 @@ export default class ScreenShot {
     // 设置截图容器位置
     this.data.setScreenShotPosition(this.position.left, this.position.top);
     // 设置截图图片存放容器宽高
-    this.screenShotImageController.width = window.innerWidth;
-    this.screenShotImageController.height = window.innerHeight;
+    // this.screenShotImageController!.width = window.innerWidth;
+    // this.screenShotImageController!.height = window.innerHeight;
     // 用户有传宽高则使用用户传进来的
     if (canvasSize.canvasWidth !== 0 && canvasSize.canvasHeight !== 0) {
       this.data.setScreenShotInfo(
         canvasSize.canvasWidth,
         canvasSize.canvasHeight
       );
-      this.screenShotImageController.width = canvasSize.canvasWidth;
-      this.screenShotImageController.height = canvasSize.canvasHeight;
+      // this.screenShotImageController!.width = canvasSize.canvasWidth;
+      // this.screenShotImageController!.height = canvasSize.canvasHeight;
     }
     // 获取截图区域画canvas容器画布
     const context = this.screenShotContainer?.getContext("2d");
@@ -179,16 +180,16 @@ export default class ScreenShot {
       // 设置为屏幕宽高
       this.data.setScreenShotInfo(window.screen.width, window.screen.height);
       // 设置为屏幕宽高
-      this.screenShotImageController.width = window.screen.width;
-      this.screenShotImageController.height = window.screen.height;
+      // this.screenShotImageController.width = window.screen.width;
+      // this.screenShotImageController.height = window.screen.height;
       // 用户有传宽高则使用用户传进来的
       if (canvasSize.canvasWidth !== 0 && canvasSize.canvasHeight !== 0) {
         this.data.setScreenShotInfo(
           canvasSize.canvasWidth,
           canvasSize.canvasHeight
         );
-        this.screenShotImageController.width = canvasSize.canvasWidth;
-        this.screenShotImageController.height = canvasSize.canvasHeight;
+        // this.screenShotImageController.width = canvasSize.canvasWidth;
+        // this.screenShotImageController.height = canvasSize.canvasHeight;
       }
     }
     // 显示截图区域容器
@@ -202,7 +203,6 @@ export default class ScreenShot {
         imgContainer.onload = () => {
           // 装载截图的dom为null则退出
           if (this.screenShotContainer == null) return;
-
           // 将用户传递的图片绘制到图片容器里
           this.screenShotImageController
             .getContext("2d")
@@ -256,7 +256,7 @@ export default class ScreenShot {
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
       // 捕获屏幕
-      captureStream = await navigator.mediaDevices.getDisplayMedia();
+      captureStream = await navigator.mediaDevices.getDisplayMedia({video: true});
       // 将MediaStream输出至video标签
       this.videoController.srcObject = captureStream;
     } catch (err) {
@@ -316,7 +316,9 @@ export default class ScreenShot {
         // 初始化截图容器
         this.initScreenShot(undefined, context, this.screenShotImageController);
         // 停止捕捉屏幕
-        this.stopCapture();
+        setTimeout(() => {
+          this.stopCapture();
+        }, 200)
       }, 500);
     });
   };
@@ -563,6 +565,7 @@ export default class ScreenShot {
       return;
     }
     this.screenShotContainer.style.zIndex = `${level}`;
+    this.screenShotImageController.style.zIndex = `${level}`;
     this.toolController.style.zIndex = `${level + 1}`;
     this.textInputController.style.zIndex = `${level + 1}`;
     this.optionIcoController.style.zIndex = `${level + 1}`;
@@ -660,6 +663,7 @@ export default class ScreenShot {
 
   private setGlobalParameter() {
     this.screenShotContainer = this.data.getScreenShotContainer() as HTMLCanvasElement | null;
+    this.screenShotImageController = this.data.getScreenShotImageController() as HTMLCanvasElement;
     this.toolController = this.data.getToolController() as HTMLDivElement | null;
     this.textInputController = this.data.getTextInputController() as HTMLDivElement | null;
     this.optionController = this.data.getOptionController() as HTMLDivElement | null;

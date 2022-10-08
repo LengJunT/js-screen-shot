@@ -1,5 +1,5 @@
 {
-  "name": "js-web-screen-shot",
+  "name": "@hekit/js-screen-shot",
   "version": "1.7.3",
   "description": "web端自定义截屏插件(原生JS版)",
   "main": "dist/screenShotPlugin.common.js",
