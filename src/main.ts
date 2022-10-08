@@ -256,7 +256,9 @@ export default class ScreenShot {
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
       // 捕获屏幕
-      captureStream = await navigator.mediaDevices.getDisplayMedia({video: true});
+      captureStream = await navigator.mediaDevices.getDisplayMedia({
+        video: true
+      });
       // 将MediaStream输出至video标签
       this.videoController.srcObject = captureStream;
     } catch (err) {
@@ -318,7 +320,7 @@ export default class ScreenShot {
         // 停止捕捉屏幕
         setTimeout(() => {
           this.stopCapture();
-        }, 200)
+        }, 200);
       }, 500);
     });
   };
